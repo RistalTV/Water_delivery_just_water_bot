@@ -3,7 +3,7 @@ import os;
 from telebot import types
 
 token = os.getenv("TOKEN");
-bot = telebot.TeleBot(token);
+bot = telebot.TeleBot('1155200911:AAHoicFejkBn1uIb2UHDpO0A1W4KNY_voY8');
 
 url_site = '';
 company = '';

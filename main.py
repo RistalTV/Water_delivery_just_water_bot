@@ -43,8 +43,7 @@ def start_reg(message):
     keyboard1 = types.ReplyKeyboardMarkup(); #наша клавиатура №1
     keyboard1.add(types.KeyboardButton('Юр.лицо'),types.KeyboardButton('Физ.лицо'));  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
     keyboard2 = types.ReplyKeyboardMarkup(); #наша клавиатура №2
-    keyboard2.add(types.KeyboardButton('Заполнить профиль');  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
-                                      
+    keyboard2.add(types.KeyboardButton('Заполнить профиль')); #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
     if message.text == 'Заполнить профиль':
         bot.send_message(message.from_user.id, "Выберите, кто вы:",reply_markup=keyboard1);
         bot.register_next_step_handler(message, get_type_face); #следующий шаг – функция get_type_face

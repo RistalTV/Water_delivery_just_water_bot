@@ -30,10 +30,11 @@ bot = telebot.TeleBot(token)
 
 # Команда Заполнить профиль(start_reg(message))
 def start_reg(message):
-    keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №1
-    keyboard1.add(types.KeyboardButton('Юр.лицо'),
-                  types.KeyboardButton('Физ.лицо'))  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
-    keyboard2 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №2
+    keyboard1 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №1
+    btn1 = types.KeyboardButton('Юр.лицо')
+    btn2 = types.KeyboardButton('Физ.лицо')
+    keyboard1.add(btn1,btn2)  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
+    keyboard2 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №2
     keyboard2.add(types.KeyboardButton('Заполнить профиль')) #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
     if message.text.lower() == 'заполнить профиль':
         bot.send_message(message.from_user.id,
@@ -49,11 +50,13 @@ def start_reg(message):
 # функция изменения типа(get_type_face(message))
 def get_type_face(message: Message):
     global type_face
-    keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №1
-    keyboard1.add(types.KeyboardButton('Отправить имя профиля'))  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
-    keyboard2 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №2
-    keyboard2.add(types.KeyboardButton('Юр.лицо'),
-                  types.KeyboardButton('Физ.лицо'))  #кнопка «Юр.лицо». добавляем кнопку в клавиатуру
+    keyboard1 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №1
+    btn = types.KeyboardButton('Отправить имя профиля')
+    keyboard1.add(btn)  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
+    keyboard2 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №2
+    btn1 = types.KeyboardButton('Юр.лицо')
+    btn2 = types.KeyboardButton('Физ.лицо')
+    keyboard2.add(btn1,btn2)  #кнопка «Юр.лицо». добавляем кнопку в клавиатуру
     if message.text == 'Юр.лицо':
         type_face = 'Юр.лицо'
         bot.send_message(message.from_user, "Напишите название компании, пожалуйста")
@@ -80,11 +83,13 @@ def get_name(message: Message):
         name = message.from_first_name
     else:
         name = message.text
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №1
-    keyboard.add(types.KeyboardButton('Москва'),
-                 types.KeyboardButton('Калуга'),
-                 types.KeyboardButton('Серпухов'),
-                 types.KeyboardButton('Орехово-Зуево'))              #кнопка «Москва». добавляем кнопку в клавиатуру
+    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №1
+    btn1 = types.KeyboardButton('Москва')
+    btn2 = types.KeyboardButton('Калуга')
+    btn3 = types.KeyboardButton('Серпухов')
+    btn4 = types.KeyboardButton('Орехово-Зуево')
+    keyboard.add(btn1,btn2)#кнопка «Москва». добавляем кнопку в клавиатуру
+    keyboard.add(btn3,btn4)#кнопка «Москва». добавляем кнопку в клавиатуру
         
     bot.send_message(message.from_user, 'Выберите ваш город:',reply_markup=keyboard)
     get_address_city(message)
@@ -95,7 +100,9 @@ def get_company(message: Message):
     global company
     company = message.text
     keyboard1 = types.ReplyKeyboardMarkup() #наша клавиатура №1
-    keyboard1.add(types.KeyboardButton('Отправить имя профиля'))  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
+    btn = types.KeyboardButton('Отправить имя профиля')
+    
+    keyboard1.add(btn)  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
     bot.send_message(message.from_user, 
                      "Напишите как к вам обращаться или нажмите на кнопку \"Отправить имя профиля\"",
                      reply_markup=keyboard1)
@@ -105,11 +112,13 @@ def get_company(message: Message):
 # функция получения названия города(get_address(message))
 def get_address_city(message: Message):
     global address
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №1
-    keyboard.add(types.KeyboardButton('Москва'),
-                 types.KeyboardButton('Калуга'),
-                 types.KeyboardButton('Серпухов'),
-                 types.KeyboardButton('Орехово-Зуево'))              #кнопка «Москва». добавляем кнопку в клавиатуру
+    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №1
+    btn1 = types.KeyboardButton('Москва')
+    btn2 = types.KeyboardButton('Калуга')
+    btn3 = types.KeyboardButton('Серпухов')
+    btn4 = types.KeyboardButton('Орехово-Зуево')
+    keyboard.add(btn1,btn2)#кнопка «Москва». добавляем кнопку в клавиатуру
+    keyboard.add(btn3,btn4)#кнопка «Москва». добавляем кнопку в клавиатуру
     if message.text == 'Москва':
         address = 'г.' + message.text 
         bot.send_message(message.from_user,
@@ -167,13 +176,18 @@ def send_welcome(message: Message):
     # В этом участке кода мы объявили слушателя для текстовых сообщений и метод их обработки. 
     # Поле content_types может принимать разные значения, и не только одно
     # @bot.message_handler(content_types=['text', 'document', 'audio'])
-    keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №1
-    keyboard1.add(types.KeyboardButton('Заполнить профиль'))  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
-    keyboard2 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №2
-    keyboard2.add(types.KeyboardButton('Заполнить профиль'))  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
-    keyboard4 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №4
-    keyboard4.add(types.KeyboardButton('Новый заказ'),types.KeyboardButton('Повторить прошлый заказ'))  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
-    keyboard4.add(types.KeyboardButton('Изменить профиль'))  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
+    keyboard1 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №1
+    btn1 = types.KeyboardButton('Заполнить профиль')   
+    keyboard1.add(btn1)  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
+    keyboard2 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №2
+    btn2 = types.KeyboardButton('Заполнить профиль')
+    keyboard2.add(btn2)  #кнопка «Отправить имя профиля». добавляем кнопку в клавиатуру
+    keyboard4 = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2) #наша клавиатура №4
+    btn3 = types.KeyboardButton('Новый заказ')
+    btn4 = types.KeyboardButton('Повторить прошлый заказ')
+    keyboard4.add(btn3, btn4)  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
+    btn5 = types.KeyboardButton('Изменить профиль')
+    keyboard4.add(btn5)  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
     if message.text == "/start":
         bot.send_message(message.from_user.id, "Здраствуйте! вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста заполните профиль",reply_markup=keyboard1)
     elif message.text == "/help":
@@ -190,9 +204,6 @@ def send_welcome(message: Message):
 def get_message(message: Message):
     print(str(message.text) + ' - get_message')
     logging.info(message.text)
-    keyboard3 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2) #наша клавиатура №3
-    keyboard3.add(types.KeyboardButton('Юр.лицо'),types.KeyboardButton('Физ.лицо'))  #кнопка «Юр.лицо» и кнопка «Физ.лицо». добавляем кнопку в клавиатуру
-    
     if message.text == "Заполнить профиль":
         start_reg(message)
         # user.start_reg()

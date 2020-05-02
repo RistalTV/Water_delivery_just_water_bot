@@ -1,4 +1,3 @@
-import sqlite3
 import pymysql
 
 conn = pymysql.connect('localhost', 'root', 'root', 'user_orders')
@@ -76,5 +75,3 @@ def exits_user(user_id: int):
         if not res:
             return None
     return res
-
-

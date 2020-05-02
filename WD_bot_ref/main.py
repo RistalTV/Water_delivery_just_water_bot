@@ -1,22 +1,20 @@
-from logging import getLogger, Logger
 from datetime import timedelta, datetime
+from logging import getLogger, Logger
+
 import config
-from telegram import Bot, ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup, Update, ParseMode
-from telegram.ext import CommandHandler, ConversationHandler, Filters, CallbackQueryHandler
+from buttons import *
+from buttons import get_Keyboard_DeliveryOrder, get_Keyboard_Finish_order, get_Keyboard_Sent_Order_to_reply
+from buttons import get_Keyboard_SendNameProf, get_Keyboard_ZapProfCommands, get_Keyboard_Button_Edit
+from buttons import get_Keyboard_ZapProf, get_Keyboard_orders, get_Keyboard_TypeFace, get_Keyboard_City
+from buttons import get_Keyboard_order, get_Keyboard_temp_order, get_Keyboard_temp_order2, get_Keyboard_temp_order3
+from config import TG_API_URL, TG_TOKEN
+from db import exits_user
+from telegram import Bot, ReplyKeyboardRemove, Update
+from telegram.ext import CommandHandler, ConversationHandler, Filters
 from telegram.ext import MessageHandler, Updater
 from telegram.utils.request import Request
-from config import TG_API_URL, TG_TOKEN, url_site
-from buttons import get_Keyboard_ZapProf, get_Keyboard_orders, get_Keyboard_TypeFace, get_Keyboard_City
-from buttons import get_Keyboard_SendNameProf, get_Keyboard_ZapProfCommands, get_Keyboard_Button_Edit
-from buttons import get_Keyboard_order, get_Keyboard_temp_order, get_Keyboard_temp_order2, get_Keyboard_temp_order3
-from buttons import get_Keyboard_DeliveryOrder, get_Keyboard_Finish_order, get_Keyboard_Sent_Order_to_reply
-from validators import validate_count, validate_date
-from buttons import *
 from validators import *
-
-from db import add_info_of_user
-from db import add_order_of_user
-from db import exits_user
+from validators import validate_count, validate_date
 
 logger: Logger = getLogger(__name__)
 
@@ -393,6 +391,7 @@ def hand_new_order(bot: Bot, update: Update, user_data: dict):
         )
         return NEW_ORDER
 
+
 @debug_requests
 def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
     # Логирование
@@ -626,7 +625,6 @@ def hand_finish_order(bot: Bot, update: Update, user_data: dict):
 
 
 def main():
-
     logger.info("Запускаем бота...")
 
     req = Request(

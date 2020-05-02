@@ -1,0 +1,5 @@
+pyTelegramBotAPI==3.6.7
+python-telegram-bot==11.1.0
+mysqlclient==1.4.6
+requests==2.22.0
+urllib3==1.25.7

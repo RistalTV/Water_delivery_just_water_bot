@@ -7,8 +7,7 @@ from buttons import get_Keyboard_DeliveryOrder, get_Keyboard_Finish_order, get_K
 from buttons import get_Keyboard_SendNameProf, get_Keyboard_ZapProfCommands, get_Keyboard_Button_Edit
 from buttons import get_Keyboard_ZapProf, get_Keyboard_orders, get_Keyboard_TypeFace, get_Keyboard_City
 from buttons import get_Keyboard_order, get_Keyboard_temp_order, get_Keyboard_temp_order2, get_Keyboard_temp_order3
-from config import TG_API_URL, TG_TOKEN
-from db import exits_user
+from config import TG_API_URL, TG_TOKEN, CHAT_ID_BUGS, CHAT_ID_COMPANY
 from telegram import Bot, ReplyKeyboardRemove, Update
 from telegram.ext import CommandHandler, ConversationHandler, Filters
 from telegram.ext import MessageHandler, Updater
@@ -30,6 +29,12 @@ def debug_requests(f):
             logger.info("Обращение в функцию {}".format(f.__name__))
             return f(*args, **kwargs)
         except Exception:
+            update = args[1]
+            bot = args[0]
+            bot.send_message(
+                chat_id=CHAT_ID_BUGS,
+                text="Ошибка в обработчике {}".format(f.__name__),
+            )
             logger.exception("Ошибка в обработчике {}".format(f.__name__))
             raise
 
@@ -52,24 +57,27 @@ def do_start(bot: Bot, update: Update):
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     user = exits_user(user_id=update.message.chat_id)
     # logger.info(user['id'])
-    if user is None:
-        bot.send_message(
-            chat_id=update.message.chat_id,
-            text="Здраствуйте! Вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста "
-                 "нажмите \'Заполнить профиль\'",
-            reply_markup=get_Keyboard_ZapProf(),
-        )
-    elif user[0]:
-        bot.send_message(
-            chat_id=update.message.chat_id,
-            text="Здраствуйте, {0}! Вас приветствует ассистент заказа воды \"Просто вода\".Вы можете приступить к покупкам. Не забудьте посетить наш сайт {1}.".format(
-                user[0][2], config.url_site),
-            reply_markup=get_Keyboard_ZapProfCommands('1'),
-        )
+#    if user is None:
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text="Здраствуйте! Вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста "
+             "нажмите \'Заполнить профиль\'",
+        reply_markup=get_Keyboard_ZapProf(),
+    )
+    # elif user[0]:
+    #     bot.send_message(
+    #         chat_id=update.message.chat_id,
+    #         text="Здраствуйте, {0}! Вас приветствует ассистент заказа воды \"Просто вода\".Вы можете приступить к покупкам. Не забудьте посетить наш сайт {1}.".format(
+    #             user[0][2], config.url_site),
+    #         reply_markup=get_Keyboard_ZapProfCommands('1'),
+    #     )
 
 
 @debug_requests
 def start_reg(bot: Bot, update: Update):
+    # Логирование
+    logger.info("hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     if update.message.text.lower() == 'заполнить профиль':
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -84,7 +92,8 @@ def start_reg(bot: Bot, update: Update):
 @debug_requests
 def hend_type_face(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hend_type_face - text =" + update.message.text.lower())
+    logger.info("hend_type_face - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Проверка
     text = update.message.text.lower()
     if text != 'юр.лицо' and text != 'физ.лицо':
@@ -120,7 +129,8 @@ def hend_type_face(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hend_name(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hend_name - text =" + update.message.text.lower())
+    logger.info("hend_name - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Проверка
     text = update.message.text.lower()
     if text == 'отправить имя профиля':
@@ -141,7 +151,8 @@ def hend_name(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hend_company(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hend_company - text =" + update.message.text.lower())
+    logger.info("hend_company - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Получение сообщения
     # Получить тип лица (Физ и Юр)
     user_data[COMPANY] = update.message.text
@@ -158,7 +169,8 @@ def hend_company(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hend_address(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hend_address - text =" + update.message.text.lower())
+    logger.info("hend_address - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Получение адреса
     text = update.message.text.lower()
     # Получить город
@@ -177,7 +189,8 @@ def hend_address(bot: Bot, update: Update, user_data: dict):
 def hend_address_city(bot: Bot, update: Update, user_data: dict):
     # Логирование
     global flag
-    logger.info("hend_address_city - text =" + update.message.text.lower())
+    logger.info("hend_address_city - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Проверка
     city = [
         'москва',
@@ -212,11 +225,18 @@ def hend_address_city(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hend_mob_phone(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hend_mob_phone - text =" + update.message.text.lower())
+    logger.info("hend_mob_phone - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Получение номера
     text = update.message.text.lower()
     # Получить адрес
     user_data[MOB_PHONE] = text
+    # Создание листа заказа
+    user_data[ORDERS] = list()
+    user_data[ORDERS].insert(0, 0)
+    user_data[ORDERS].insert(1, 0)
+    user_data[ORDERS].insert(2, 0)
+    user_data[ORDERS].insert(3, 0)
 
     # Спрашиваем юзера
     bot.send_message(
@@ -226,14 +246,6 @@ def hend_mob_phone(bot: Bot, update: Update, user_data: dict):
     )
     if user_data[TYPE_FACE] == 'физ.лицо':
         user_data[COMPANY] = None
-    # add_info_of_user(
-    #     user_id=update.message.chat_id,
-    #     username=user_data[NAME],
-    #     company=user_data[COMPANY],
-    #     address=user_data[ADDRESS],
-    #     address_city=user_data[ADDRESS_CITY],
-    #     mob_phone=user_data[MOB_PHONE]
-    # )
     logger.info('user_data: %s', user_data)
     return MENU
 
@@ -252,13 +264,8 @@ def cancel_handler(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hand_select_menu(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hand_select_menu - text =" + update.message.text.lower())
-    # Создание листа заказа
-    user_data[ORDERS] = list()
-    user_data[ORDERS].insert(0, 0)
-    user_data[ORDERS].insert(1, 0)
-    user_data[ORDERS].insert(2, 0)
-    user_data[ORDERS].insert(3, 0)
+    logger.info("hand_select_menu - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # получение текста
     text = update.message.text.lower()
     if text == 'новый заказ':
@@ -272,11 +279,9 @@ def hand_select_menu(bot: Bot, update: Update, user_data: dict):
     elif text == 'повторить прошлый заказ':
         # Проверка на наличие заказов
         flag = None
-        if user_data[ORDERS][0] == 0 or user_data[ORDERS][0] < 2:
-            flag = False
-        elif user_data[ORDERS][1] == 0 or user_data[ORDERS][1] < 6:
-            flag = False
-        elif user_data[ORDERS][2] == 0 or user_data[ORDERS][2] < 1:
+        if (user_data[ORDERS][0] == 0 or user_data[ORDERS][0] < 2) \
+                and (user_data[ORDERS][1] == 0 or user_data[ORDERS][1] < 6) \
+                and (user_data[ORDERS][2] == 0 or user_data[ORDERS][2] < 1):
             flag = False
         else:
             flag = True
@@ -293,11 +298,11 @@ def hand_select_menu(bot: Bot, update: Update, user_data: dict):
         else:
             # Выводим сообщение о том что юзер делал заказы и бот повторил заказ
             order_text = 'Ваш заказ содержит:\n\n'
-            if user_data[ORDERS][0] != 0 and user_data[ORDERS][0] > 2:
+            if user_data[ORDERS][0] > 1:
                 order_text = order_text + f'\n  - 19 литровая бутыль ({user_data[ORDERS][0]} шт.)'
-            elif user_data[ORDERS][1] != 0 and user_data[ORDERS][1] > 6:
+            if user_data[ORDERS][1] > 5:
                 order_text = order_text + f'\n  - 6 литровая бутыль ({user_data[ORDERS][1]} шт.)'
-            elif user_data[ORDERS][2] != 0 and user_data[ORDERS][2] > 1:
+            if user_data[ORDERS][2] > 0:
                 order_text = order_text + f'\n  - Механическая помпа ({user_data[ORDERS][2]} шт.)'
             sum = user_data[ORDERS][0] * 270 + user_data[ORDERS][1] * 100 + user_data[ORDERS][2] * 799
             order_text = order_text + f'\n\nОбщая стоимость заказа: {user_data[ORDERS][3]} руб.'
@@ -345,7 +350,8 @@ def order_text(cost: int, count: int):
 @debug_requests
 def hand_new_order(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hand_new_order - text =" + update.message.text.lower())
+    logger.info("hand_new_order - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     text = update.message.text.lower()
     if text == "вернуться назад":
         bot.send_message(
@@ -395,7 +401,8 @@ def hand_new_order(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hend_type_face - text =" + update.message.text.lower())
+    logger.info("hend_type_face - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     if update.message.text.lower() == 'изменить':
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -416,7 +423,7 @@ def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
             text='Нажмите на кнопки снизу:',
             reply_markup=get_Keyboard_Button_Edit()
         )
-        return EDIT_PROFILE
+        return NEW_ORDER
 
 
 @debug_requests
@@ -427,8 +434,9 @@ def hand_temorary_enter_quanity(bot: Bot, update: Update, user_data: dict):
     if text == 'отменить':
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Нажмите на кнопки снизу:',
-            reply_markup=get_Keyboard_Button_Edit()
+            text=f'Наш магазин предлагает Вам широкий ассортимент питьевой бутилированной воды. Хотите больше товаров? '
+                 f'Посетите наш сайт {config.url_site}',
+            reply_markup=get_Keyboard_orders()
         )
         return NEW_ORDER
     elif text == 'ввести кол-во':
@@ -450,11 +458,11 @@ def hand_temorary_enter_quanity(bot: Bot, update: Update, user_data: dict):
         # and user_data[ORDERS][2] != 0 \
         # and
         order_text = 'Ваш заказ содержит:\n\n'
-        if user_data[ORDERS][0] != 0 and user_data[ORDERS][0] > 2:
+        if user_data[ORDERS][0] > 1:
             order_text = order_text + f'\n  - 19 литровая бутыль ({user_data[ORDERS][0]} шт.)'
-        elif user_data[ORDERS][1] != 0 and user_data[ORDERS][1] > 6:
+        if user_data[ORDERS][1] > 5:
             order_text = order_text + f'\n  - 6 литровая бутыль ({user_data[ORDERS][1]} шт.)'
-        elif user_data[ORDERS][2] != 0 and user_data[ORDERS][2] > 1:
+        if user_data[ORDERS][2] > 0:
             order_text = order_text + f'\n  - Механическая помпа ({user_data[ORDERS][2]} шт.)'
         sum = user_data[ORDERS][0] * 270 + user_data[ORDERS][1] * 100 + user_data[ORDERS][2] * 799
         user_data[ORDERS].pop(3)
@@ -479,7 +487,8 @@ def hand_temorary_enter_quanity(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hand_enter_quanity2(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hand_enter_quanity2 - text =" + update.message.text.lower())
+    logger.info("hand_enter_quanity2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Основная логика функции
     if user_data[ORDERS][0] == -1:
         min = 2
@@ -541,7 +550,8 @@ def hand_checkout(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hand_checkout2(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hand_checkout2 - text =" + update.message.text.lower())
+    logger.info("hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Основная логика функции
     text = update.message.text.lower()
     vdata = validate_date(text)
@@ -549,14 +559,13 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
         return NEW_ORDER
     elif text == 'завтра':
         now = datetime.now()
-        user_data[ORDERS].pop(4)
         user_data[ORDERS].insert(4, "{}.{}.{}".format(now.day, now.month, now.year))
         order_text = 'Ваш заказ оформлен:\n\n'
-        if user_data[ORDERS][0] != 0 and user_data[ORDERS][0] > 2:
+        if user_data[ORDERS][0] > 1:
             order_text = order_text + f'\n  - 19 литровая бутыль ({user_data[ORDERS][0]} шт.)'
-        elif user_data[ORDERS][1] != 0 and user_data[ORDERS][1] > 6:
+        if user_data[ORDERS][1] > 5:
             order_text = order_text + f'\n  - 6 литровая бутыль ({user_data[ORDERS][1]} шт.)'
-        elif user_data[ORDERS][2] != 0 and user_data[ORDERS][2] > 1:
+        if user_data[ORDERS][2] > 0:
             order_text = order_text + f'\n  - Механическая помпа ({user_data[ORDERS][2]} шт.)'
         order_text = order_text + f'\n\nОбщая стоимость заказа:  {user_data[ORDERS][3]} руб.' + \
                      f'Заказ будет доставлен {user_data[ORDERS][4]}' + \
@@ -566,15 +575,40 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
             text=order_text,
             reply_markup=get_Keyboard_Finish_order(),
         )
+        # Отправка данных в компанию
+        order_text = "\n\n----------------------------------------------------------------------------"
+        order_text: str = order_text + "\n         Заказ состоит из: "
+        if user_data[ORDERS][0] > 1:
+            order_text = order_text + f'\n  - 19 литровая бутыль ({user_data[ORDERS][0]} шт.)'
+        if user_data[ORDERS][1] > 5:
+            order_text = order_text + f'\n  - 6 литровая бутыль ({user_data[ORDERS][1]} шт.)'
+        if user_data[ORDERS][2] > 0:
+            order_text = order_text + f'\n  - Механическая помпа ({user_data[ORDERS][2]} шт.)'
+        order_text = order_text + "\n\n----------------------------------------------------------------------------"
+        order_text = order_text + f"\n   Заказ должен быть доставлен: {user_data[ORDERS][4]}"
+        order_text = order_text + "\n\n----------------------------------------------------------------------------"
+
+        order_text = order_text + f'\nСумма: {user_data[ORDERS][3]} руб.'
+        bot.send_message(
+            chat_id=CHAT_ID_COMPANY,
+            text=f'Поступил заказ:\n' \
+                 f'\nТип лица: {user_data[TYPE_FACE]}' \
+                 f'\nКомпания: {user_data[COMPANY]}'
+                 f'\nИмя: {user_data[NAME]}' \
+                 f'\nГород: {user_data[ADDRESS_CITY]}' \
+                 f'\nАдрес: {user_data[ADDRESS]}' \
+                 f'\nНомер мобильного телефона: {user_data[MOB_PHONE]}' + order_text,
+        )
+
         return FINISH_ORDER
     elif vdata is not None:
         user_data[ORDERS].insert(4, text)
         order_text = 'Ваш заказ оформлен:\n\n'
-        if user_data[ORDERS][0] != 0 and user_data[ORDERS][0] > 2:
+        if user_data[ORDERS][0] > 1:
             order_text = order_text + f'\n  - 19 литровая бутыль ({user_data[ORDERS][0]} шт.)'
-        elif user_data[ORDERS][1] != 0 and user_data[ORDERS][1] > 6:
+        if user_data[ORDERS][1] > 5:
             order_text = order_text + f'\n  - 6 литровая бутыль ({user_data[ORDERS][1]} шт.)'
-        elif user_data[ORDERS][2] != 0 and user_data[ORDERS][2] > 1:
+        if user_data[ORDERS][2] > 0:
             order_text = order_text + f'\n  - Механическая помпа ({user_data[ORDERS][2]} шт.)'
         order_text = order_text + f'\n\nОбщая стоимость заказа:  {user_data[ORDERS][3]} руб.' + \
                      f'Заказ будет доставлен {user_data[ORDERS][4]}' + \
@@ -584,6 +618,31 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
             text=order_text,
             reply_markup=get_Keyboard_Finish_order(),
         )
+        # Отправка данных в компанию
+        order_text = "\n\n----------------------------------------------------------------------------"
+        order_text: str = order_text + "\n         Заказ состоит из: "
+        if user_data[ORDERS][0] > 1:
+            order_text = order_text + f'\n  - 19 литровая бутыль ({user_data[ORDERS][0]} шт.)'
+        if user_data[ORDERS][1] > 5:
+            order_text = order_text + f'\n  - 6 литровая бутыль ({user_data[ORDERS][1]} шт.)'
+        if user_data[ORDERS][2] > 0:
+            order_text = order_text + f'\n  - Механическая помпа ({user_data[ORDERS][2]} шт.)'
+        order_text = order_text + "\n\n----------------------------------------------------------------------------"
+        order_text = order_text + f"\n   Заказ должен быть доставлен: {user_data[ORDERS][4]}"
+        order_text = order_text + "\n\n----------------------------------------------------------------------------"
+
+        order_text = order_text + f'\nСумма: {user_data[ORDERS][3]} руб.'
+        bot.send_message(
+            chat_id=CHAT_ID_COMPANY,
+            text=f'Поступил заказ:\n' \
+                 f'\nТип лица: {user_data[TYPE_FACE]}' \
+                 f'\nКомпания: {user_data[COMPANY]}'
+                 f'\nИмя: {user_data[NAME]}' \
+                 f'\nГород: {user_data[ADDRESS_CITY]}' \
+                 f'\nАдрес: {user_data[ADDRESS]}' \
+                 f'\nНомер мобильного телефона: {user_data[MOB_PHONE]}' + order_text,
+        )
+
         return FINISH_ORDER
     else:
         after_tomorrow = datetime.now() + timedelta(1)
@@ -604,10 +663,11 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hand_finish_order(bot: Bot, update: Update, user_data: dict):
     # Логирование
-    logger.info("hand_checkout2 - text =" + update.message.text.lower())
+    logger.info("hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Основная логика функции
     text = update.message.text.lower()
-    if text == 'вернуться в меню':
+    if text == 'вернуться в меню' and update.message.chat_id != config.CHAT_ID_COMPANY and update.message.chat_id != config.CHAT_ID_BUGS:
         bot.send_message(
             chat_id=update.message.chat_id,
             text='Сделайте ваш заказ:',
@@ -628,15 +688,15 @@ def main():
     logger.info("Запускаем бота...")
 
     req = Request(
-        connect_timeout=3.0,
-        read_timeout=2.0,
+        connect_timeout=5.0,
+        read_timeout=4.0,
     )
+
     bot = Bot(
         token=TG_TOKEN,
         request=req,
         base_url=TG_API_URL,
     )
-
     updater = Updater(
         bot=bot,
     )

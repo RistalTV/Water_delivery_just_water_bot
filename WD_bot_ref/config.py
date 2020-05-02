@@ -1,6 +1,6 @@
 import logging.config
 
-TG_TOKEN = "1192087203:AAFS_q5p-gj04n4c0vtuB7vCPLY9sonTiIE"
+TG_TOKEN = "1192087203:AAFP_3APkguAegMQYqydYDKXicLCeSqBFqQ"
 TG_API_URL = "https://telegg.ru/orig/bot"
 
 LOGGING = {
@@ -29,4 +29,6 @@ LOGGING = {
 }
 logging.config.dictConfig(LOGGING)
 
-url_site = ' *cсылка на сайт '
+CHAT_ID_COMPANY = -1001413848914
+CHAT_ID_BUGS = -1001490831454
+url_site = 'просто-вода.рус'

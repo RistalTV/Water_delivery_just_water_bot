@@ -55,7 +55,7 @@ FINISH_ORDER = range(15)
 def do_start(bot: Bot, update: Update):
     logger.info("do_start START - text =" + str(update.message.text) + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
-    user = exits_user(user_id=update.message.chat_id)
+    # user = exits_user(user_id=update.message.chat_id)
     # logger.info(user['id'])
 #    if user is None:
     bot.send_message(

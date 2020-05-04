@@ -1,16 +1,15 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 from logging import getLogger, Logger
 
 import config
-from buttons import *
-from buttons import get_Keyboard_DeliveryOrder, get_Keyboard_Finish_order, get_Keyboard_Sent_Order_to_reply
-from buttons import get_Keyboard_SendNameProf, get_Keyboard_ZapProfCommands, get_Keyboard_Button_Edit
-from buttons import get_Keyboard_ZapProf, get_Keyboard_orders, get_Keyboard_TypeFace, get_Keyboard_City
-from buttons import get_Keyboard_order, get_Keyboard_temp_order, get_Keyboard_temp_order2, get_Keyboard_temp_order3
-from config import TG_API_URL, TG_TOKEN, CHAT_ID_BUGS, CHAT_ID_COMPANY
+from buttons import get_Keyboard_DeliveryOrder, get_Keyboard_Finish_order, get_Keyboard_Sent_Order_to_reply, \
+    get_Keyboard_SendNameProf, get_Keyboard_ZapProfCommands, get_Keyboard_Button_Edit, \
+    get_Keyboard_ZapProf, get_Keyboard_orders, get_Keyboard_TypeFace, get_Keyboard_City, \
+    get_Keyboard_order, get_Keyboard_temp_order, get_Keyboard_temp_order2, get_Keyboard_temp_order3
+from config import TG_API_URL, TG_TOKEN, CHAT_ID_BUGS, CHAT_ID_COMPANY, CHAT_ID_LOGS, HashTagFindLogsINFO, \
+    HashTagFindLogsWARN, HashTagFindORDER
 from telegram import Bot, ReplyKeyboardRemove, Update
-from telegram.ext import CommandHandler, ConversationHandler, Filters
-from telegram.ext import MessageHandler, Updater
+from telegram.ext import CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 from telegram.utils.request import Request
 from validators import *
 from validators import validate_count, validate_date
@@ -20,6 +19,14 @@ logger: Logger = getLogger(__name__)
 flag = None
 
 
+# Функция отправки в лог чат
+def logTOchat(bot: Bot, update: Update, text: str):
+    bot.send_message(
+        chat_id=CHAT_ID_LOGS,
+        text=text,
+    )
+
+
 # Декоратор для лога
 def debug_requests(f):
     # Декоратор для обработки событий от телеграма
@@ -27,13 +34,20 @@ def debug_requests(f):
     def inner(*args, **kwargs):
         try:
             logger.info("Обращение в функцию {}".format(f.__name__))
+            bot = args[0]
+            bot.send_message(
+                chat_id=CHAT_ID_LOGS,
+                text=f"{HashTagFindLogsINFO}" +
+                     "\n==============================================\n" \
+                     "Обращение в функцию {}\n\n".format(f.__name__),
+            )
             return f(*args, **kwargs)
         except Exception:
             update = args[1]
             bot = args[0]
             bot.send_message(
                 chat_id=CHAT_ID_BUGS,
-                text="Ошибка в обработчике {}".format(f.__name__),
+                text=f"{HashTagFindLogsWARN}" + "Ошибка в обработчике {}".format(f.__name__),
             )
             logger.exception("Ошибка в обработчике {}".format(f.__name__))
             raise
@@ -55,22 +69,31 @@ FINISH_ORDER = range(15)
 def do_start(bot: Bot, update: Update):
     logger.info("do_start START - text =" + str(update.message.text) + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
-    # user = exits_user(user_id=update.message.chat_id)
-    # logger.info(user['id'])
-#    if user is None:
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - do_start START - text =" + str(update.message.text) + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     bot.send_message(
         chat_id=update.message.chat_id,
         text="Здраствуйте! Вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста "
              "нажмите \'Заполнить профиль\'",
         reply_markup=get_Keyboard_ZapProf(),
     )
-    # elif user[0]:
-    #     bot.send_message(
-    #         chat_id=update.message.chat_id,
-    #         text="Здраствуйте, {0}! Вас приветствует ассистент заказа воды \"Просто вода\".Вы можете приступить к покупкам. Не забудьте посетить наш сайт {1}.".format(
-    #             user[0][2], config.url_site),
-    #         reply_markup=get_Keyboard_ZapProfCommands('1'),
-    #     )
+
+
+@debug_requests
+def do_Help(bot: Bot, update: Update):
+    logger.info("do_Help START - text =" + str(update.message.text) + "; chat_id=" + str(
+        update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - do_Help START - text =" + str(update.message.text) + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text="Здраствуйте! Вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста " +
+             "введите команду /start",
+
+        reply_markup=get_Keyboard_ZapProf(),
+    )
 
 
 @debug_requests
@@ -78,6 +101,9 @@ def start_reg(bot: Bot, update: Update):
     # Логирование
     logger.info("hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     if update.message.text.lower() == 'заполнить профиль':
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -94,8 +120,19 @@ def hend_type_face(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hend_type_face - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
-    # Проверка
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_type_face - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
     text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
+    # Проверка
     if text != 'юр.лицо' and text != 'физ.лицо':
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -131,6 +168,18 @@ def hend_name(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hend_name - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_name - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     # Проверка
     text = update.message.text.lower()
     if text == 'отправить имя профиля':
@@ -153,6 +202,18 @@ def hend_company(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hend_company - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_company - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     # Получение сообщения
     # Получить тип лица (Физ и Юр)
     user_data[COMPANY] = update.message.text
@@ -171,6 +232,18 @@ def hend_address(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hend_address - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_address - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     # Получение адреса
     text = update.message.text.lower()
     # Получить город
@@ -191,6 +264,18 @@ def hend_address_city(bot: Bot, update: Update, user_data: dict):
     global flag
     logger.info("hend_address_city - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_address_city - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     # Проверка
     city = [
         'москва',
@@ -227,6 +312,18 @@ def hend_mob_phone(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hend_mob_phone - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_mob_phone - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     # Получение номера
     text = update.message.text.lower()
     # Получить адрес
@@ -237,7 +334,6 @@ def hend_mob_phone(bot: Bot, update: Update, user_data: dict):
     user_data[ORDERS].insert(1, 0)
     user_data[ORDERS].insert(2, 0)
     user_data[ORDERS].insert(3, 0)
-
     # Спрашиваем юзера
     bot.send_message(
         chat_id=update.message.chat_id,
@@ -247,6 +343,7 @@ def hend_mob_phone(bot: Bot, update: Update, user_data: dict):
     if user_data[TYPE_FACE] == 'физ.лицо':
         user_data[COMPANY] = None
     logger.info('user_data: %s', user_data)
+    logTOchat(bot=bot, update=update, text=f'{HashTagFindLogsINFO} - user_data: {user_data}')
     return MENU
 
 
@@ -266,6 +363,18 @@ def hand_select_menu(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_select_menu - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=" #infoWaterDelivery - hand_select_menu - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     # получение текста
     text = update.message.text.lower()
     if text == 'новый заказ':
@@ -352,7 +461,18 @@ def hand_new_order(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_new_order - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_new_order - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
     text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     if text == "вернуться назад":
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -403,6 +523,18 @@ def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hend_type_face - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hend_type_face - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    # Проверка старта
+    text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     if update.message.text.lower() == 'изменить':
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -430,7 +562,17 @@ def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
 def hand_temorary_enter_quanity(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_temorary_enter_quanity - text =" + update.message.text.lower())
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_temorary_enter_quanity - text =" + update.message.text.lower())
+    # Проверка старта
     text = update.message.text.lower()
+    if text == 'заполнить профиль':
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Выберите, вы кто:",
+            reply_markup=get_Keyboard_TypeFace(),
+        )
+        return TYPE_FACE
     if text == 'отменить':
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -489,6 +631,9 @@ def hand_enter_quanity2(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_enter_quanity2 - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_enter_quanity2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Основная логика функции
     if user_data[ORDERS][0] == -1:
         min = 2
@@ -530,6 +675,8 @@ def hand_enter_quanity2(bot: Bot, update: Update, user_data: dict):
 def hand_checkout(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_checkout - text =" + update.message.text.lower())
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_checkout - text =" + update.message.text.lower())
     # Основная логика функции
     text = update.message.text.lower()
     after_tomorrow = datetime.now() + timedelta(1)
@@ -552,6 +699,9 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Основная логика функции
     text = update.message.text.lower()
     vdata = validate_date(text)
@@ -591,7 +741,7 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
         order_text = order_text + f'\nСумма: {user_data[ORDERS][3]} руб.'
         bot.send_message(
             chat_id=CHAT_ID_COMPANY,
-            text=f'Поступил заказ:\n' \
+            text=f'{HashTagFindORDER}\n\n  Поступил заказ:\n' \
                  f'\nТип лица: {user_data[TYPE_FACE]}' \
                  f'\nКомпания: {user_data[COMPANY]}'
                  f'\nИмя: {user_data[NAME]}' \
@@ -634,7 +784,7 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
         order_text = order_text + f'\nСумма: {user_data[ORDERS][3]} руб.'
         bot.send_message(
             chat_id=CHAT_ID_COMPANY,
-            text=f'Поступил заказ:\n' \
+            text=f'{HashTagFindORDER}\n\n  Поступил заказ:\n' \
                  f'\nТип лица: {user_data[TYPE_FACE]}' \
                  f'\nКомпания: {user_data[COMPANY]}'
                  f'\nИмя: {user_data[NAME]}' \
@@ -665,6 +815,9 @@ def hand_finish_order(bot: Bot, update: Update, user_data: dict):
     # Логирование
     logger.info("hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
+    logTOchat(bot=bot, update=update,
+              text=f"{HashTagFindLogsINFO} - hand_checkout2 - text =" + update.message.text.lower() + "; chat_id=" + str(
+                  update.message.chat_id) + "; name= " + str(update.message.from_user.first_name))
     # Основная логика функции
     text = update.message.text.lower()
     if text == 'вернуться в меню' and update.message.chat_id != config.CHAT_ID_COMPANY and update.message.chat_id != config.CHAT_ID_BUGS:
@@ -763,8 +916,9 @@ def main():
     )
 
     start_handler = CommandHandler("start", do_start)
+    help_handler = CommandHandler("help", do_start)
     # message_handler = MessageHandler(Filters.all, do_echo)
-
+    updater.dispatcher.add_handler(help_handler)
     updater.dispatcher.add_handler(start_handler)
     updater.dispatcher.add_handler(Main_handler)
     # updater.dispatcher.add_handler(message_handler)

@@ -891,10 +891,19 @@ def main():
     updater = Updater(
         bot=bot,
     )
+
+    bot.send_message(
+        chat_id=CHAT_ID_LOGS,
+        text="\n\n\n\nБот выключается\n\n\n\n",
+    )
     # Проверить что бот корректно подключился к Telegram API
     info = bot.get_me()
     logger.info(f'Bot info: {info}')
 
+    bot.send_message(
+        chat_id=CHAT_ID_LOGS,
+        text=f"\n\n\n\n{info}\n\n\n\n",
+    )
     # Навесить обработчики команд
     Main_handler = ConversationHandler(
         entry_points=[
@@ -965,6 +974,10 @@ def main():
     updater.start_polling()
     updater.idle()
 
+    bot.send_message(
+        chat_id=CHAT_ID_LOGS,
+        text="\n\n\n\nБот выключается\n\n\n\n",
+    )
     logger.info("Закончили...")
 
 

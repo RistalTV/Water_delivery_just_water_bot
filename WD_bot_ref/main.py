@@ -47,7 +47,7 @@ def debug_requests(f):
             bot = args[0]
             bot.send_message(
                 chat_id=CHAT_ID_BUGS,
-                text=f"{HashTagFindLogsWARN}" + "Ошибка в обработчике {1} Exception = {1}".format(f.__name__,Exception),
+                text=f"{HashTagFindLogsWARN} Ошибка в обработчике {f.__name__} Exception = {Exception}"
             )
             logger.exception("Ошибка в обработчике {}".format(f.__name__))
             raise
@@ -107,7 +107,7 @@ def do_Help(bot: Bot, update: Update):
 
 @debug_requests
 def start_reg(bot: Bot, update: Update):
-    upTextL = update.message.text.lower()
+    upTextL = str(update.message.text).lower()
     chat_id = update.message.chat_id
     name = update.message.from_user.first_name.lower()
     # Логирование
@@ -881,6 +881,7 @@ def main():
     req = Request(
         connect_timeout=5.0,
         read_timeout=4.0,
+        con_pool_size=15,
     )
 
     bot = Bot(

@@ -430,7 +430,7 @@ def hand_select_menu(bot: Bot, update: Update, user_data: dict):
             # Выводим сообщение о том что юзер не делал заказы
             bot.send_message(
                 chat_id=chat_id,
-                text="Вы ранее не заказывали у нас доставку воды. Сделайте новый заказ и далее вы сможете повторять новый заказ",
+                text="Вы ранее не заказывали у нас доставку воды. Сделайте новый заказ и далее вы сможете повторять предыдущие заказы",
                 reply_markup=get_Keyboard_ZapProfCommands('1'),
             )
             return MENU

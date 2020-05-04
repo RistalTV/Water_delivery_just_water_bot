@@ -1,7 +1,8 @@
 import logging.config
-
-# TG_TOKEN = "1192087203:AAFP_3APkguAegMQYqydYDKXicLCeSqBFqQ"
-TG_TOKEN = "1034943274:AAFfin_v_3ZjV2gwJmszS1BILxX3K4y7lw8"
+# ===== main bot
+TG_TOKEN = "1192087203:AAFP_3APkguAegMQYqydYDKXicLCeSqBFqQ"
+# ===== test bot
+# TG_TOKEN = "1034943274:AAFfin_v_3ZjV2gwJmszS1BILxX3K4y7lw8"
 
 HashTagFindLogsINFO = "#infoWaterDelivery"
 HashTagFindLogsWARN = "#WarningWaterDelivery"
@@ -35,9 +36,8 @@ LOGGING = {
 }
 logging.config.dictConfig(LOGGING)
 
-CHAT_ID_COMPANY = -1001337535965
-    #-1001413848914
-CHAT_ID_BUGS = -1001337535965
-    #-1001490831454
+CHAT_ID_COMPANY = -1001413848914
+CHAT_ID_BUGS = -1001490831454
 CHAT_ID_LOGS = -1001337535965
+
 url_site = 'просто-вода.рус'

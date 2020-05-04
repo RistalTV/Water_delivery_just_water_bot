@@ -380,7 +380,7 @@ def cancel_handler(bot: Bot, update: Update, user_data: dict):
     """ Отменить весь процесс диалога. Данные будут утеряны
     """
     bot.send_message(
-        chat_id=chat_id,
+        chat_id=update.message.chat_id,
         text='Отмена. Для начала с нуля нажмите /start',
     )
     return ConversationHandler.END

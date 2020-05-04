@@ -47,7 +47,7 @@ def debug_requests(f):
             bot = args[0]
             bot.send_message(
                 chat_id=CHAT_ID_BUGS,
-                text=f"{HashTagFindLogsWARN}" + "Ошибка в обработчике {}".format(f.__name__),
+                text=f"{HashTagFindLogsWARN}" + "Ошибка в обработчике {1} Exception = {1}".format(f.__name__,Exception),
             )
             logger.exception("Ошибка в обработчике {}".format(f.__name__))
             raise
@@ -894,8 +894,17 @@ def main():
 
     bot.send_message(
         chat_id=CHAT_ID_LOGS,
-        text="\n\n\n\nБот выключается\n\n\n\n",
+        text="\n\n\n\nЗапуск бота\n\n\n\n",
     )
+    bot.send_message(
+        chat_id=CHAT_ID_COMPANY,
+        text="\n\n\n\nЗапуск бота\n\n\n\n",
+    )
+    bot.send_message(
+        chat_id=CHAT_ID_BUGS,
+        text="\n\n\n\nЗапуск бота\n\n\n\n",
+    )
+
     # Проверить что бот корректно подключился к Telegram API
     info = bot.get_me()
     logger.info(f'Bot info: {info}')
@@ -976,6 +985,15 @@ def main():
 
     bot.send_message(
         chat_id=CHAT_ID_LOGS,
+        text="\n\n\n\nБот выключается\n\n\n\n",
+    )
+
+    bot.send_message(
+        chat_id=CHAT_ID_COMPANY,
+        text="\n\n\n\nБот выключается\n\n\n\n",
+    )
+    bot.send_message(
+        chat_id=CHAT_ID_BUGS,
         text="\n\n\n\nБот выключается\n\n\n\n",
     )
     logger.info("Закончили...")

@@ -47,7 +47,7 @@ def debug_requests(f):
             bot = args[0]
             bot.send_message(
                 chat_id=CHAT_ID_BUGS,
-                text=f"{HashTagFindLogsWARN} Ошибка в обработчике {f.__name__} Exception = {Exception}"
+                text=f"{HashTagFindLogsWARN} Ошибка в обработчике {f.__name__} Exception = {Exception.__class__}"
             )
             logger.exception("Ошибка в обработчике {}".format(f.__name__))
             raise
@@ -67,9 +67,10 @@ FINISH_ORDER = range(15)
 
 @debug_requests
 def do_start(bot: Bot, update: Update):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     # logger.info("do_start START - text =" + upTextL + "; chat_id=" + str(
     #     update.message.chat_id) + "; name= " + name)
@@ -87,9 +88,10 @@ def do_start(bot: Bot, update: Update):
 
 @debug_requests
 def do_Help(bot: Bot, update: Update):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("do_Help START - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -108,8 +110,8 @@ def do_Help(bot: Bot, update: Update):
 @debug_requests
 def start_reg(bot: Bot, update: Update):
     upTextL = str(update.message.text).lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hand_checkout2 - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -130,9 +132,10 @@ def start_reg(bot: Bot, update: Update):
 
 @debug_requests
 def hend_type_face(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     logger.info("hend_type_face - text =" + upTextL + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + name)
@@ -181,11 +184,12 @@ def hend_type_face(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hend_name(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    name = update.effective_chat.first_name.lower()
-    chat_id = update.message.chat_id
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    name = update.effective_user.first_name.lower()
+    chat_id = update.effective_chat.id
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hend_name - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -219,9 +223,10 @@ def hend_name(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hend_company(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     logger.info("hend_company - text =" + upTextL + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + name)
@@ -236,9 +241,10 @@ def hend_company(bot: Bot, update: Update, user_data: dict):
             reply_markup=get_Keyboard_TypeFace(),
         )
         return TYPE_FACE
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     # Получение сообщения
     # Получить тип лица (Физ и Юр)
@@ -254,9 +260,10 @@ def hend_company(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hend_address(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     logger.info("hend_address - text =" + upTextL + "; chat_id=" + str(
         update.message.chat_id) + "; name= " + name)
@@ -287,9 +294,10 @@ def hend_address(bot: Bot, update: Update, user_data: dict):
 @debug_requests
 def hend_address_city(bot: Bot, update: Update, user_data: dict):
     global flag
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hend_address_city - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -336,9 +344,10 @@ def hend_address_city(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hend_mob_phone(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     # logger.info("hend_mob_phone - text =" + upTextL + "; chat_id=" + str(
     #     update.message.chat_id) + "; name= " + name)
@@ -388,15 +397,18 @@ def cancel_handler(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hand_select_menu(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    # name = update.effective_user.full_name.lower()
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hand_select_menu - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
-    logTOchat(bot=bot, update=update,
-              text=" #infoWaterDelivery - hand_select_menu - text =" + upTextL + "; chat_id=" + str(
-                  update.message.chat_id) + "; name= " + name)
+    logTOchat(
+        bot=bot, 
+        update=update,
+        text=f" {HashTagFindLogsINFO} - hand_select_menu - text ='{upTextL}'; chat_id= {str(chat_id)}; name= {name}")
     # Проверка старта
     if upTextL == 'заполнить профиль':
         bot.send_message(
@@ -482,9 +494,10 @@ def order_text(cost: int, count: int):
 
 @debug_requests
 def hand_new_order(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hand_new_order - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -547,9 +560,10 @@ def hand_new_order(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hend_type_face - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -590,9 +604,10 @@ def hand_edit_profile(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hand_temorary_enter_quanity(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     # logger.info("hand_temorary_enter_quanity - text =" + upTextL)
     logTOchat(bot=bot, update=update,
@@ -653,13 +668,21 @@ def hand_temorary_enter_quanity(bot: Bot, update: Update, user_data: dict):
             reply_markup=get_Keyboard_orders()
         )
         return NEW_ORDER
+    else:
+        bot.send_message(
+            chat_id=chat_id,
+            text=f'Нажмите на кнопки снизу: ',
+            reply_markup=get_Keyboard_order()
+        )
+        return TEMPORARY_ENTER_QUANTITY
 
 
 @debug_requests
 def hand_enter_quanity2(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hand_enter_quanity2 - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -705,9 +728,10 @@ def hand_enter_quanity2(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hand_checkout(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
     # logger.info("hand_checkout - text =" + upTextL)
     logTOchat(bot=bot, update=update,
@@ -730,9 +754,10 @@ def hand_checkout(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hand_checkout2(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         #     logger.info("hand_checkout2 - text =" + upTextL + "; chat_id=" + str(
         #         update.message.chat_id) + "; name= " + name)
@@ -848,9 +873,10 @@ def hand_checkout2(bot: Bot, update: Update, user_data: dict):
 
 @debug_requests
 def hand_finish_order(bot: Bot, update: Update, user_data: dict):
-    upTextL = update.message.text.lower()
-    chat_id = update.message.chat_id
-    name = update.message.from_user.first_name.lower()
+    upTextL = str(update.effective_message.text)
+    upTextL = upTextL.lower()
+    chat_id = update.effective_chat.id
+    name = update.effective_user.full_name.lower()
     # Логирование
         # logger.info("hand_checkout2 - text =" + upTextL + "; chat_id=" + str(
         #     update.message.chat_id) + "; name= " + name)
@@ -879,9 +905,9 @@ def main():
     logger.info("Запускаем бота...")
 
     req = Request(
-        connect_timeout=5.0,
-        read_timeout=4.0,
-        con_pool_size=15,
+        connect_timeout=3.0,
+        read_timeout=2.0,
+        con_pool_size=12,
     )
 
     bot = Bot(

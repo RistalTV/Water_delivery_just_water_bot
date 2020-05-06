@@ -80,7 +80,7 @@ def do_start(bot: Bot, update: Update):
     # Основная логика
     bot.send_message(
         chat_id=chat_id,
-        text="Здраствуйте! Вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста "
+        text="Здравствуйте! Вас приветствует ассистент заказа воды \"Просто вода\". Для начала работы, пожайлуста, "
              "нажмите \'Заполнить профиль\'",
         reply_markup=get_Keyboard_ZapProf(),
     )
@@ -122,7 +122,7 @@ def start_reg(bot: Bot, update: Update):
     if upTextL == 'заполнить профиль':
         bot.send_message(
             chat_id=chat_id,
-            text="Выберите, вы кто:",
+            text="Выберите, кто вы:",
             reply_markup=get_Keyboard_TypeFace(),
         )
         return TYPE_FACE

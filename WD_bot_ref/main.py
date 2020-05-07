@@ -1,5 +1,5 @@
 from datetime import timedelta
-from logging import getLogger, Logger
+from logging import getLogger
 
 import config
 from buttons import get_Keyboard_DeliveryOrder, get_Keyboard_Finish_order, get_Keyboard_Sent_Order_to_reply, \
@@ -14,7 +14,7 @@ from telegram.utils.request import Request
 from validators import *
 from validators import validate_count, validate_date
 
-logger: Logger = getLogger(__name__)
+logger = getLogger(__name__)
 
 flag = None
 

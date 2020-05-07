@@ -1,4 +1,5 @@
 import logging.config
+
 # ===== main bot
 TG_TOKEN = "1192087203:AAFP_3APkguAegMQYqydYDKXicLCeSqBFqQ"
 # ===== test bot
@@ -22,9 +23,10 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "class": 'logging.StreamHandler',
+            "class": "logging.FileHandler",
+            "formatter": "verbose",
             "level": 'DEBUG',
-            "formatter": 'verbose',
+            "filename": "main.log"
         },
     },
     "loggers": {

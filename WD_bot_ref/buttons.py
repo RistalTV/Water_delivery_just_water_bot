@@ -1,5 +1,4 @@
-from telegram import KeyboardButton
-from telegram import ReplyKeyboardMarkup
+from telegram import KeyboardButton, ReplyKeyboardMarkup
 
 BUTTON_1_1_ZapProf = "Заполнить профиль"
 

@@ -42,12 +42,12 @@ def debug_requests(f):
                      "Обращение в функцию {}\n\n".format(f.__name__),
             )
             return f(*args, **kwargs)
-        except Exception:
+        except Exception as e:
             update = args[1]
             bot = args[0]
             bot.send_message(
                 chat_id=CHAT_ID_BUGS,
-                text=f"{HashTagFindLogsWARN} Ошибка в обработчике {f.__name__} Exception = {Exception.__class__}"
+                text=f"{HashTagFindLogsWARN} Ошибка в обработчике {f.__name__} Exception = {str(e)}"
             )
             logger.exception("Ошибка в обработчике {}".format(f.__name__))
             raise
